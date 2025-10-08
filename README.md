@@ -1,6 +1,6 @@
 # Capillary-Chatbot — CapillaryDocs RAG Chatbot
 
-> A retrieval-augmented chatbot that indexes Capillary documentation (FAISS + SentenceTransformers), serves a Markdown-capable Discord/Jupyter-style frontend, and answers questions using Mistral via OpenRouter.
+> A retrieval-augmented chatbot that indexes Capillary documentation (FAISS + SentenceTransformers), serves a Markdown-capable simple chat-style frontend, and answers questions using Mistral via OpenRouter.
 
 Clean, modular, and production-friendly. Designed for local development and easy deployment.
 
@@ -48,7 +48,7 @@ capillary-chatbot/
 │   └─ capillary_chunks_id_mapping.json
 │
 ├─ templates/
-│   └─ index.html                   # Discord/Jupyter-style frontend (Markdown)
+│   └─ index.html 
 │
 ├─ app.py                           # Flask RAG app (loads index, df, queries OpenRouter)
 ├─ build_rag_pipeline.py            # orchestrates chunk -> embed -> index -> metadata
@@ -107,20 +107,6 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-
-**Example `requirements.txt`**
-
-```
-flask
-pandas
-faiss-cpu       # or faiss-gpu if you have CUDA and want GPU speed
-sentence-transformers
-requests
-python-dotenv   # optional but recommended
-marked          # frontend lib is CDN-loaded; no need in requirements
-```
-
-*Note:* Use `faiss-cpu` on most dev machines. For large indexes or production, use `faiss-gpu` on a GPU server.
 
 ---
 
@@ -238,7 +224,7 @@ curl -X POST http://127.0.0.1:5000/chat \
 
 `.env`
 
-```
+```env
 OPENROUTER_API_KEY=sk-...
 MISTRAL_MODEL=mistralai/mistral-small-3.2-24b-instruct:free
 ```
