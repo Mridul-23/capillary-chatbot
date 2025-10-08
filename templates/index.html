@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HelperBot - CapillaryDocs</title>
+
+<!-- Marked.js for Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+  /* Full-screen layout */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #0f111a;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Chat container */
+  #chat {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #0f111a;
+  }
+
+  /* Message styling */
+  .message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    line-height: 1.5;
+    white-space: pre-wrap; /* preserve line breaks */
+  }
+
+  .user-message {
+    background-color: #4f4fff;
+    align-self: flex-end;
+    color: #fff;
+  }
+
+  .bot-message {
+    background-color: #1a1c2f;
+    align-self: flex-start;
+  }
+
+  /* Input container */
+  .input-container {
+    display: flex;
+    padding: 10px;
+    background-color: #1a1c2f;
+    gap: 10px;
+  }
+
+  input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: #0f111a;
+    color: #fff;
+  }
+
+  input::placeholder {
+    color: #888;
+  }
+
+  button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    background-color: #4f4fff;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background-color: #6f6fff;
+  }
+
+  /* Loader animation */
+  .loader {
+    border: 3px solid #1a1c2f;
+    border-top: 3px solid #4f4fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Scrollbar styling */
+  #chat::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  #chat::-webkit-scrollbar-thumb {
+    background-color: #4f4fff;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Chat messages -->
+<div id="chat"></div>
+
+<!-- Input box -->
+<div class="input-container">
+  <input type="text" id="message" placeholder="Type your question...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+async function sendMessage() {
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    // Display user message
+    const userDiv = document.createElement("div");
+    userDiv.className = "message user-message";
+    userDiv.textContent = msg;
+    chat.appendChild(userDiv);
+    chat.scrollTop = chat.scrollHeight;
+    input.value = "";
+
+    // Display loader for bot
+    const botDiv = document.createElement("div");
+    botDiv.className = "message bot-message";
+    botDiv.innerHTML = '<span>HelperBot is typing...</span><span class="loader"></span>';
+    chat.appendChild(botDiv);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await response.json();
+
+        botDiv.innerHTML = marked.parse(data.answer);
+        chat.scrollTop = chat.scrollHeight;
+    } catch (err) {
+        botDiv.innerHTML = "Error connecting to server.";
+    }
+}
+document.getElementById("message").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>
