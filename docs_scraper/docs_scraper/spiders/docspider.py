@@ -21,7 +21,7 @@ class DocspiderSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        # Extract sidebar links (adjust selectors if needed)
+        # Extract sidebar links
         items = response.css('.Sidebar1t2G1ZJq-vU1 .Sidebar-link2Dsha-r-GKh2::attr(href)').getall()
         
         for url in items:
